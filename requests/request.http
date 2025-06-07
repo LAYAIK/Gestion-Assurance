@@ -1,0 +1,20 @@
+post http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "admin@admin.com",
+  "password": "admin"
+}
+
+###
+
+post http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "email": "admin@admin.com",
+  "password": "admin",
+  "confirme_password": "admin",
+  "nom": "Admin",
+  "prenom": "Admin"
+}  
