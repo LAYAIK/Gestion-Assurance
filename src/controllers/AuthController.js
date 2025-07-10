@@ -1,10 +1,11 @@
 import Utilisateur from "../models/UtilisateurModel.js";
+import Role from "../models/RoleModel.js";
 import generateToken from "../controllers/GenerateTokenController.js"; // Assurez-vous que le fichier GenerateTokenController.js";
 import bcrypt from "bcrypt";
 
 
 // controlleur d'authentification de utilisateur
-async function loginController(req, res) {
+async function LoginController(req, res) {
     try {
         const { email, password } = req.body;
 
@@ -27,18 +28,11 @@ async function loginController(req, res) {
         if (!user.is_actif && user.date_demande !== null) {
             return res.status(403).json({ message: 'Compte inactif, veuillez attendre la validation de l\'administrateur' });
         }
-        const token = generateToken(user.id_utilisateur, user.id_role);
+        const role = await Role.findByPk(user.id_role);
+        const token = generateToken(user.id_utilisateur, role.nom_role);
         res.json({ 
             message: 'Connexion réussie',
-            token,
-            user: {
-                id: user.id_utilisateur,
-                email: user.adresse_email,
-                nom: user.noms,
-                prenom: user.prenoms,
-                matricule: user.matricule,
-                role: user.role
-            }
+            token
          });
     } catch (error) {
         console.error(error);
@@ -46,5 +40,43 @@ async function loginController(req, res) {
     }
     
 };
-        
-export default loginController;
+
+// src/controllers/AuthController.js
+import jwt from 'jsonwebtoken'; // Assurez-vous d'avoir 'jsonwebtoken' installé
+import { addTokenToBlacklist } from '../services/TokenBlacklistService.js';
+import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/jwtConfig.js';
+
+
+const logout = (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Token format is "Bearer <token>"' });
+    }
+
+    // Décoder le token pour obtenir sa date d'expiration (exp)
+    const decodedToken = jwt.decode(token);
+    if (!decodedToken || !decodedToken.exp) {
+      return res.status(400).json({ message: 'Invalid token or missing expiration' });
+    }
+
+    const currentTime = Math.floor(Date.now() / 1000); // Temps actuel en secondes
+    const expiresIn = decodedToken.exp - currentTime;
+
+    if (expiresIn > 0) {
+      addTokenToBlacklist(token, expiresIn);
+    }
+
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error('Error during logout:', error);
+    res.status(500).json({ message: 'Server error during logout' });
+  }
+};
+    
+export { LoginController , logout };

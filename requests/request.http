@@ -1,4 +1,4 @@
-post http://localhost:3000/login
+post http://localhost:5000/auth/login
 Content-Type: application/json
 
 {
@@ -8,7 +8,20 @@ Content-Type: application/json
 
 ###
 
-post http://localhost:3000/register
+post http://localhost:5000/api/ask
+Content-Type: application/json
+
+{
+  "email": "admin@admin.com",
+  "fonction": "admin",
+  "direction": "Finance",
+  "justificatif": "arrete du 3667788"
+}
+
+
+###
+
+post http://localhost:5000/register
 Content-Type: application/json
 
 {
@@ -17,4 +30,53 @@ Content-Type: application/json
   "confirme_password": "admin",
   "nom": "Admin",
   "prenom": "Admin"
-}  
+}
+
+### Créer un nouveau client
+# Copiez le token JWT obtenu de la requête de connexion ci-dessus
+# Remplacez <YOUR_JWT_TOKEN_HERE> par le VRAI token
+POST http://localhost:3000/api/clients HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer <YOUR_JWT_TOKEN_HERE>
+
+{
+    "nom": "Jean",
+    "prenom": "Dupont",
+    "email": "jean.dupont@client.com",
+    "telephone": "0612345678",
+    "adresse": "15 Rue des Fleurs, 75001 Paris",
+    "telephone1": "0798765432",
+    "numero_identite": "ID123456789"
+}
+
+### Obtenir tous les clients
+# Copiez le token JWT (celui de l'agent ou de l'admin)
+GET http://localhost:3000/api/clients HTTP/1.1
+Authorization: Bearer <YOUR_JWT_TOKEN_HERE>
+
+### Obtenir le profil de l'utilisateur connecté
+# Copiez le token JWT de l'utilisateur qui fait la requête
+GET http://localhost:3000/getProfile HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRiOTQ1NDkyLTk1NGEtNGNiMi1hNzExLTJkMTdlM2I1ZjQwYiIsInJvbGUiOm51bGwsImlhdCI6MTc0OTU1MTQyOCwiZXhwIjoxNzQ5NjM3ODI4fQ.2ZMqbXloJrrguXDzJ1hARizsoP5YCIlRrfK1DC6MvvY
+
+### Mettre à jour le profil de l'utilisateur connecté
+# Copiez le token JWT de l'utilisateur
+PUT http://localhost:3000/updateProfile HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRiOTQ1NDkyLTk1NGEtNGNiMi1hNzExLTJkMTdlM2I1ZjQwYiIsInJvbGUiOm51bGwsImlhdCI6MTc0OTU1MTQyOCwiZXhwIjoxNzQ5NjM3ODI4fQ.2ZMqbXloJrrguXDzJ1hARizsoP5YCIlRrfK1DC6MvvY
+
+{
+    "nom": "admin",
+    "email": "admin@exemple.com",
+    "password": "admin"
+};
+
+###
+
+post http://localhost:5000/api/roles
+Content-Type: application/json
+
+{
+   "nom_role": "admin",
+   "description": "le develloper du projet"
+}

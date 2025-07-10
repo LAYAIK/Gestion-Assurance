@@ -5,6 +5,7 @@ import ContratAssurance from './ContratAssuranceModel.js'; // Relation avec Cont
 import Dossier from './DossierModel.js'; // Relation avec Dossier (si un événement est lié à un dossier)
 import Sinistre from './SinistreModel.js'; // Relation avec Sinistre (si un événement est lié à un sinistre)
 import Utilisateur from './UtilisateurModel.js'; // L'utilisateur qui a enregistré l'événement
+import Client from './ClientModel.js';
 
 const HistoriqueEvent = sequelize.define('HistoriqueEvent', {
   id_hist_event: { // Utilisation d'un UUID pour l'ID primaire
@@ -20,6 +21,23 @@ const HistoriqueEvent = sequelize.define('HistoriqueEvent', {
   description: {
     type: DataTypes.TEXT,
     allowNull: false
+  },
+  // Nouveaux champs pour l'audit :
+  entite_affectee: { // ex: 'ContratAssurance', 'Dossier', 'Sinistre', 'Client'
+    type: DataTypes.STRING(50),
+    allowNull: true // Peut être nul si l'événement est au niveau du système et non lié à une entité spécifique
+  },
+  id_entite_affectee: { // UUID de l'entité affectée
+    type: DataTypes.UUID,
+    allowNull: true
+  },
+  valeurs_avant: { // JSONB to store old values for updates
+    type: DataTypes.JSONB,
+    allowNull: true
+  },
+  valeurs_apres: { // JSONB to store new values for updates/creations
+    type: DataTypes.JSONB,
+    allowNull: true
   },
   date_evenement: {
     type: DataTypes.DATE,

@@ -53,7 +53,7 @@ import { protect, authorize } from '../middlewares/AuthMiddleware.js';
  *         description: Accès refusé, rôle insuffisant (non-administrateur).
  *       404:
  *         description: Utilisateur non trouvé.
- *   put:
+ *   patch:
  *     summary: Mettre à jour un utilisateur (par Admin)
  *     description: Mettre à jour les informations d'un utilisateur spécifique. Accessible uniquement par les administrateurs.
  *     tags: [Gestion Utilisateur par l'Admin]
@@ -74,30 +74,13 @@ import { protect, authorize } from '../middlewares/AuthMiddleware.js';
  *           schema:
  *             type: object
  *             properties:
- *               nom:
- *                 type: string
- *                 description: Nom de l'utilisateur
- *               email:
- *                 type: string
- *                 format: email
- *                 description: Email de l'utilisateur (doit être unique)
- *               mot_de_passe:
- *                 type: string
- *                 format: password
- *                 description: Nouveau mot de passe (sera haché)
- *               role:
- *                 type: string
- *                 enum: [admin, agent, client, expert]
- *                 description: Rôle de l'utilisateur
- *               id_compagnie:
+ *               id_role:
  *                 type: string
  *                 format: uuid
  *                 nullable: true
- *                 description: ID de la compagnie associée (si applicable)
+ *                 description: ID du rôle associé (si applicable)
  *             example:
- *               nom: "Jane Doe"
- *               email: "jane.doe@example.com"
- *               role: "agent"
+ *               id_role: "123e4567-e89b-12d3-a456-426614174000"
  *     responses:
  *       200:
  *         description: Utilisateur mis à jour avec succès.
@@ -142,12 +125,12 @@ import { protect, authorize } from '../middlewares/AuthMiddleware.js';
 const router = express.Router();
 
 // Toutes ces routes sont protégées et réservées aux administrateurs
-router.route('api/users/')
+router.route('/api/users')
   .get(protect, authorize('admin'), getUsers); // Seuls les admins peuvent lister tous les utilisateurs
 
-router.route('api/users/:id')
+router.route('/api/users/:id')
   .get(protect, authorize('admin'), getUserById) // Seuls les admins peuvent voir un utilisateur par ID
-  .put(protect, authorize('admin'), updateUser)  // Seuls les admins peuvent modifier un utilisateur
+  .patch(protect, authorize('admin'), updateUser)  // Seuls les admins peuvent modifier un utilisateur
   .delete(protect, authorize('admin'), deleteUser); // Seuls les admins peuvent supprimer un utilisateur
   
 

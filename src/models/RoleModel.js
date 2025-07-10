@@ -26,7 +26,7 @@ const Role = sequelize.define('Role', {
     primaryKey: true,
     allowNull: false
   },
-  nom_role: { // Ex: 'admin', 'agent', 'client', 'expert'
+  nom_role: { // Ex: 'admin', 'agent', 'expert'
     type: DataTypes.STRING(50),
     allowNull: false,
     unique: true

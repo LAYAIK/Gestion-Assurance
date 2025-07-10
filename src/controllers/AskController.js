@@ -17,8 +17,11 @@ const askController = async (req, res) => {
     if (existingUser.is_actif) {
         return res.status(404).json({ message: "L\'Utilisateur existe deja et possède un compte actif veuillez vous connecter" });
     }
+    if(!existingUser.is_actif && existingUser.date_demande !== null) {
+        return res.status(404).json({ message: "L\'Utilisateur existe deja et possède une demande en cours faite le " + existingUser.date_demande + " veuillez attendre la validation de l\'administrateur" });
+    }
     const updatedRows = await Utilisateur.update(
-        { fonction, direction, justificatif}, // Mettre à jour 
+        { fonction, direction, justificatif,date_demande: new Date()}, // Mettre à jour 
         { where: { email : emailTrimmed } }
     );
     if (updatedRows === 0) {

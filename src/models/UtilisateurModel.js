@@ -22,6 +22,10 @@ import bcrypt from 'bcryptjs';
  *           type: string
  *         password:
  *           type: string
+ *         fonction:
+ *           type: string
+ *         direction:
+ *           type: string
  *         is_actif:
  *           type: boolean
  *         id_role:
@@ -54,7 +58,19 @@ const Utilisateur = sequelize.define('Utilisateur', {
   },
   password: { // Champ pour le mot de passe haché
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
+  },
+  fonction: { // Champ pour la fonction de l'utilisateur
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  direction: { // Champ pour la direction de l'utilisateur
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  justificatif: {
+    type: DataTypes.STRING,
+    allowNull: true
   },
   is_actif: { // Champ pour l'état actif de l'utilisateur
     type: DataTypes.BOOLEAN,

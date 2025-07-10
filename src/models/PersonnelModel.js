@@ -1,7 +1,6 @@
 // src/models/PersonnelModel.js
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/db.js';
-import Utilisateur from './UtilisateurModel.js'; // Pour la relation avec Utilisateur
 import Compagnie from './CompagnieModel.js'; // Pour la relation avec Compagnie
 
 const Personnel = sequelize.define('Personnel', {
@@ -11,8 +10,6 @@ const Personnel = sequelize.define('Personnel', {
     primaryKey: true,
     allowNull: false
   },
-  // Le diagramme ne montre que 'idPersonnel', mais un personnel doit avoir d'autres infos
-  // Ajout de champs communs pour un personnel
   nom: {
     type: DataTypes.STRING(100),
     allowNull: false
@@ -29,6 +26,10 @@ const Personnel = sequelize.define('Personnel', {
       isEmail: true // Validation de l'email
     }
   },
+  numero_identite: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
   telephone: {
     type: DataTypes.STRING(20),
     allowNull: true // Peut être null si le personnel n'a pas de téléphone
@@ -40,7 +41,13 @@ const Personnel = sequelize.define('Personnel', {
 }, {
   tableName: 'Personnels',
   timestamps: true,
-  underscored: true
+  underscored: true,
+  indexes: [
+    {
+      unique: true,
+      fields: ['email']
+    }
+  ]
 });
 
 export default Personnel;

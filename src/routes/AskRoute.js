@@ -3,7 +3,7 @@ import express from "express";
 
 /**
  * @swagger
- * /ask:
+ * /api/ask:
  *   post:
  *     summary: Demande de compte utilisateur
  *     description: Demande de compte utilisateur
@@ -62,7 +62,7 @@ import express from "express";
 
 const router = express.Router(); // Création d'un routeur Express
 // Route pour l'authentification
-router.post("/ask", askController); // Route publique pour la connexion, utilisant le contrôleur d'authentification
+router.post('/api/ask', askController); // Route publique pour la connexion, utilisant le contrôleur d'authentification
 
 
 const askRoute = router; // Exportation du routeur

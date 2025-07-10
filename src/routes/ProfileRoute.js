@@ -5,8 +5,8 @@ import { protect } from '../middlewares/AuthMiddleware.js';
 /**
  * @swagger
  * tags:
- *   name: Profile
- *   description: Opérations liées au profil utilisateur
+ *  name: Gestion Profiles
+ *  description: Opérations liées au profil utilisateur
  * 
  * components:
  *   securitySchemes:
@@ -15,11 +15,11 @@ import { protect } from '../middlewares/AuthMiddleware.js';
  *       scheme: bearer
  *       bearerFormat: JWT
  * 
- * /getProfile:
+ * /api/profile:
  *   get:
  *     summary: Obtenir le profil de l'utilisateur connecté
  *     description: Obtenir le profil de l'utilisateur connecté
- *     tags: [Profile]
+ *     tags: [Gestion Profiles]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -36,11 +36,11 @@ import { protect } from '../middlewares/AuthMiddleware.js';
  *       401:
  *         description: Non autorisé, token invalide ou expiré
  * 
- * /updateProfile:
+ * /api/profile/:
  *   put:
  *     summary: Mettre à jour le profil de l'utilisateur connecté
  *     description: Mettre à jour le profil de l'utilisateur connecté
- *     tags: [Profile]
+ *     tags: [Gestion Profiles]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -54,12 +54,16 @@ import { protect } from '../middlewares/AuthMiddleware.js';
  *     responses:
  *       200:
  *         description: Profil utilisateur mis à jour avec succès
+ *       400:
+ *         description: Données invalides ou email déjà utilisé
+ *       401:
+ *         description: Non autorisé, token invalide ou expiré
  */
 
 const router = express.Router();
 
-router.get('/getProfile', protect, getProfileController); // Protégée, pour l'utilisateur lui-même
-router.put('/updateProfile', protect, updateProfileController); // Protégée, pour l'utilisateur lui-même
+router.get('/api/profile', protect, getProfileController); // Protégée, pour l'utilisateur lui-même
+router.put('/api/profile', protect, updateProfileController); // Protégée, pour l'utilisateur lui-même
 
 router.get('/', (req, res) => {
     res.send('Bienvenue sur la plateforme de gestion d\'assurance ! Visitez /api-docs pour la documentation API.');

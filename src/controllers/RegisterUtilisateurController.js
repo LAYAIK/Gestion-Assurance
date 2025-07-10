@@ -26,8 +26,8 @@ async function RegisterUtilisateurController(req, res) {
             try {
 
                 const utilisateur = await Utilisateur.findOne({ where: { email: emailTrimmed } });
-                const token = generateToken(utilisateur.id_utilisateur, utilisateur.id_role);
-                res.json({ token, user: utilisateur });
+                //const token = generateToken(utilisateur.id_utilisateur, utilisateur.id_role);
+                res.json({message: "Utilisateur enregistré avec succes", user: utilisateur });
 
             } catch (error) {
                 console.error('Erreur lors de la recherche de l\'utilisateur:', error);

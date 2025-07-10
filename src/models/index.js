@@ -1,7 +1,5 @@
 // src/models/index.js
 import { sequelize } from '../config/db.js';
-
-// Importation de tous les modèles
 import Compagnie from './CompagnieModel.js';
 import Utilisateur from './UtilisateurModel.js';
 import TypeAssurance from './TypeAssuranceModel.js';
@@ -15,8 +13,23 @@ import EtatDossier from './EtatDossierModel.js';
 import Sinistre from './SinistreModel.js';
 import Archive from './ArchiveModel.js';
 import Role from './RoleModel.js';
+import Document from './DocumentModel.js';
+import IndemnisationSinistre from './IndemnisationSinistreModel.js';
+import PrimeAssurance from './PrimeAssuranceModel.js';
+import TransactionBancaire from './TransactionBancaireModel.js';
+
 
 // --- Définition des Associations ---
+
+// TransactionBancaire - Client (0..*)
+// Une transaction bancaire peut avoir un client associé
+TransactionBancaire.belongsTo(Client, { foreignKey: 'id_client', as: 'client_transaction' });
+Client.hasMany(TransactionBancaire, { foreignKey: 'id_client', as: 'transactions_client' });
+
+// ContratAss - PrimeAss (1..*)
+// Un contrat d'assurance peut avoir plusieurs primes
+PrimeAssurance.belongsTo(ContratAssurance, { foreignKey: 'id_contrat', as: 'contrat' });
+ContratAssurance.hasMany(PrimeAssurance, { foreignKey: 'id_contrat', as: 'primes' });
 
 // Compagnie - Utilisateur (1..*)
 // Une compagnie peut avoir plusieurs utilisateurs
@@ -57,8 +70,8 @@ ContratAssurance.belongsTo(Utilisateur, { foreignKey: 'id_utilisateur', as: 'ges
 // Un contrat d'assurance peut couvrir un véhicule, et un véhicule peut être couvert par un contrat
 // J'ai mis id_police dans Véhicule comme allowNull: true, car un véhicule peut ne pas avoir de contrat.
 // Si un véhicule est toujours lié à un contrat spécifique (One-to-One), cela pourrait être :
-// ContratAss.hasOne(Vehicule, { foreignKey: 'id_police', as: 'vehicule_assure' });
-// Vehicule.belongsTo(ContratAss, { foreignKey: 'id_police', as: 'contrat_associe' });
+ContratAssurance.hasOne(Vehicule, { foreignKey: 'id_police', as: 'vehicule_assuree' });
+Vehicule.belongsTo(ContratAssurance, { foreignKey: 'id_police', as: 'contrat_associee' });
 // Ici, je garde la relation dans Vehicule, car c'est 0..1 sur le diagramme
 ContratAssurance.hasMany(Vehicule, { foreignKey: 'id_police', as: 'vehicules_couverts' });
 Vehicule.belongsTo(ContratAssurance, { foreignKey: 'id_police', as: 'contrat_associe' });
@@ -119,6 +132,41 @@ Role.hasMany(Utilisateur, { foreignKey: 'id_role', as: 'utilisateurs' });
 Utilisateur.belongsTo(Role, { foreignKey: 'id_role', as: 'role_utilisateur' });
 
 
+// NOUVELLES ASSOCIATIONS POUR LE MODULE CLIENT
+
+// Client - HistoriqueEvent (0..*)
+// Un client peut avoir plusieurs événements dans son historique.
+Client.hasMany(HistoriqueEvent, { foreignKey: 'id_client', as: 'historique_client' });
+HistoriqueEvent.belongsTo(Client, { foreignKey: 'id_client', as: 'client_concerne' });
+
+// Client - Document (0..*)
+// Un client peut avoir plusieurs documents associés directement.
+Client.hasMany(Document, { foreignKey: 'id_client', as: 'documents_client' });
+Document.belongsTo(Client, { foreignKey: 'id_client', as: 'client_associe' });
+
+// Assurez-vous que les associations existantes de DocumentModel sont également là:
+Document.belongsTo(ContratAssurance, { foreignKey: 'id_police', as: 'contrat_document' });
+ContratAssurance.hasMany(Document, { foreignKey: 'id_police', as: 'documents' });
+
+Document.belongsTo(Sinistre, { foreignKey: 'id_sinistre', as: 'sinistre_document' });
+Sinistre.hasMany(Document, { foreignKey: 'id_sinistre', as: 'documents' });
+
+Document.belongsTo(Dossier, { foreignKey: 'id_dossier', as: 'dossier_document' });
+Dossier.hasMany(Document, { foreignKey: 'id_dossier', as: 'documents' });
+
+Document.belongsTo(Utilisateur, { foreignKey: 'id_utilisateur', as: 'uploaded_by' });
+Utilisateur.hasMany(Document, { foreignKey: 'id_utilisateur', as: 'documents_uploaded' });
+
+// Utilisateur - Client (0..*)
+// Un utilisateur peut avoir plusieurs clients.
+Utilisateur.hasMany(Client, { foreignKey: 'id_utilisateur', as: 'clients_utilisateur' });
+Client.belongsTo(Utilisateur, { foreignKey: 'id_utilisateur', as: 'utilisateur_client' });
+
+// Sinistre - IndemnisationSinistre (0..*)
+IndemnisationSinistre.belongsTo(Sinistre, { foreignKey: 'id_sinistre', as: 'sinistre' });
+Sinistre.hasMany(IndemnisationSinistre, { foreignKey: 'id_sinistre', as: 'indemnisations' });
+
+
 // Exportation de l'instance sequelize et de tous les modèles
 export {
   sequelize,
@@ -134,5 +182,9 @@ export {
   EtatDossier,
   Sinistre,
   Archive,
-  Role
+  Role,
+  Document,
+  IndemnisationSinistre,
+  PrimeAssurance,
+  TransactionBancaire
 };

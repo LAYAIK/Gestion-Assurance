@@ -24,7 +24,7 @@ const getUsers = async (req, res) => {
 // @access  Private/Admin
 const getUserById = async (req, res) => {
   try {
-    const user = await Utilisateur.findByPk(req.params.id_utilisateur, {
+    const user = await Utilisateur.findByPk(req.params.id, {
       attributes: { exclude: ['password'] } // Exclure le mot de passe des résultats
     });
 
@@ -39,13 +39,13 @@ const getUserById = async (req, res) => {
 };
 
 // @desc    Mettre à jour un utilisateur (par Admin)
-// @route   PUT /api/users/:id
+// @route   PATCH /api/users/:id
 // @access  Private/Admin
 const updateUser = async (req, res) => {
-  const { role, id_compagnie } = req.body;
+  const { id_role } = req.body;
 
   try {
-    const user = await Utilisateur.findByPk(req.params.id_utilisateur);
+    const user = await Utilisateur.findByPk(req.params.id);
 
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur non trouvé.' });
@@ -53,8 +53,8 @@ const updateUser = async (req, res) => {
 
     // Mettre à jour les champs
 
-    if (role) user.role = role;
-    if (id_compagnie !== undefined) user.id_compagnie = id_compagnie; // Permet de mettre à null
+    if (id_role) user.id_role = id_role;
+         user.is_actif = true; // Activer l'utilisateur
 
     await user.save();
 

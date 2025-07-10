@@ -18,8 +18,20 @@ const Vehicule = sequelize.define('Vehicule', {
     type: DataTypes.STRING(100),
     allowNull: true
   },
-  annee: {
+  annee_fabrication: {
     type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  couleur: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  numero_chassis: {
+    type: DataTypes.STRING(50),
+    allowNull: true
+  },
+  numero_carte_grise: {
+    type: DataTypes.STRING(50),
     allowNull: true
   }
 }, {

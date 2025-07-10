@@ -18,10 +18,10 @@ const getProfileController = async (req, res) => {
     }
 
     res.status(200).json({
-      id: utilisateur.id,
+      id: utilisateur.id_utilisateur,
       nom: utilisateur.nom,
       email: utilisateur.email,
-      role: utilisateur.role,
+      id_role: utilisateur.id_role,
       createdAt: utilisateur.createdAt,
       updatedAt: utilisateur.updatedAt
     });
@@ -52,7 +52,7 @@ const updateProfileController = async (req, res) => {
       const userWithSameEmail = await Utilisateur.findOne({
         where: {
           email,
-          id: { [Op.ne]: req.user.id_utilisateur } // Exclure l'utilisateur actuel
+          id_utilisateur: { [Op.ne]: req.user.id_utilisateur } // Exclure l'utilisateur actuel
         }
       });
       if (userWithSameEmail) {
@@ -68,14 +68,14 @@ const updateProfileController = async (req, res) => {
     await utilisateur.save();
 
     // Re-générer le token si l'email ou d'autres informations importantes changent (optionnel)
-    const token = generateToken(utilisateur.id, utilisateur.role);
+    const token = generateToken(utilisateur.id_utilisateur, utilisateur.id_role);
 
     res.status(200).json({
       message: 'Profil mis à jour avec succès.',
-      id: utilisateur.id,
+      id: utilisateur.id_utilisateur,
       nom: utilisateur.nom,
       email: utilisateur.email,
-      role: utilisateur.role,
+      role: utilisateur.id_role,
       token // Renvoyer un nouveau token si l'ancien est invalidé
     });
 

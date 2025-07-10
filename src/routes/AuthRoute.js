@@ -1,9 +1,9 @@
-import LoginController from "../controllers/AuthController.js";
+import { LoginController , logout } from "../controllers/AuthController.js";
 import express from "express";
 
 /**
  * @swagger
- * /login:
+ * /Auth/login:
  *   post:
  *     summary: Authentification de l'utilisateur
  *     description: Authentifie l'utilisateur en utilisant son email et son mot de passe et renvoie un token JWT
@@ -46,13 +46,16 @@ import express from "express";
  */
 
 
+
+
 const router = express.Router(); // Création d'un routeur Express
 // Route pour l'authentification
-router.post("/login", LoginController); // Route publique pour la connexion, utilisant le contrôleur d'authentification
+router.post('/login', LoginController); // Route publique pour la connexion, utilisant le contrôleur d'authentification
+router.post('/logout', logout); // Nouvelle route de déconnexion
 
 
-const loginRoute = router; // Exportation du routeur
-export default loginRoute; 
+const loginLogoutRoute = router; // Exportation du routeur
+export default loginLogoutRoute; 
 
 
 

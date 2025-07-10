@@ -9,6 +9,10 @@ import ApiRoutes from './src/routes/index.js'; // Import API routes
 
 import dotenv from 'dotenv'; // Import dotenv for environment variable management
 dotenv.config(); // Load environment variables from .env file
+import morgan from 'morgan';
+import paymentLogger from './src/middlewares/PaymentLogger.js';
+import errorHandler from './src/middlewares/ErrorHandler.js';
+import { auditContextMiddleware } from './src/middlewares/AuditMiddleware.js';
 
 
 
@@ -19,6 +23,9 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+app.use('/api',paymentLogger);
+app.use(auditContextMiddleware);
 
 
 const logger = pino({ 
